@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Shield, Scale, Lock } from 'lucide-react';
+import { Header } from '@/components/Header';
+import { AuthModal } from '@/components/AuthModal';
 import { KautionsForm } from '@/components/KautionsForm';
 import { KautionsResult } from '@/components/KautionsResult';
+import { CrossSellBanner } from '@/components/CrossSellBanner';
 import { checkKaution, KautionInput, KautionResult } from '@/lib/kautionsCheck';
 
 const Index = () => {
   const [result, setResult] = useState<KautionResult | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleSubmit = (data: KautionInput) => {
     const checkResult = checkKaution(data);
@@ -19,20 +23,20 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container max-w-3xl py-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
-              <Shield className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Kautions-Check</h1>
-              <p className="text-sm text-muted-foreground">Prüfen Sie Ihre Mietkaution</p>
-            </div>
+      <Header onLoginClick={() => setShowAuthModal(true)} />
+
+      {/* Hero Section */}
+      <div className="gradient-primary text-white py-8 px-4">
+        <div className="container max-w-3xl">
+          <div className="flex items-center gap-3 mb-2">
+            <Shield className="h-8 w-8" />
+            <h1 className="text-3xl md:text-4xl font-bold">Kautions-Check</h1>
           </div>
+          <p className="text-white/80 text-lg">
+            Prüfen Sie Ihre Mietkaution – ist sie rechtlich korrekt?
+          </p>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <main className="container max-w-3xl py-8 px-4">
@@ -58,9 +62,21 @@ const Index = () => {
             </div>
 
             <KautionsForm onSubmit={handleSubmit} />
+
+            {/* Cross-Sell Banner */}
+            <div className="mt-8">
+              <CrossSellBanner />
+            </div>
           </>
         ) : (
-          <KautionsResult result={result} onReset={handleReset} />
+          <>
+            <KautionsResult result={result} onReset={handleReset} />
+
+            {/* Cross-Sell Banner */}
+            <div className="mt-8">
+              <CrossSellBanner />
+            </div>
+          </>
         )}
       </main>
 
@@ -71,6 +87,8 @@ const Index = () => {
           <p className="mt-1">Diese Prüfung ersetzt keine Rechtsberatung.</p>
         </div>
       </footer>
+
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 };
